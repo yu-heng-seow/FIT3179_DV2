@@ -1,26 +1,118 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <!-- Import Vega & Vega-Lite (does not have to be from CDN) -->
-  <script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.17.0"></script>
-  
-  
-  <!-- CSS file -->
-  <link rel="stylesheet" type="text/css" href="css/styles.css" media="all">
-  
+  <meta charset="UTF-8">
+  <title>Australian Hospital Distribution Dashboard</title>
+
+  <!-- Vega libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fafafa;
+      margin: 40px;
+      color: #222;
+      text-align: center;
+    }
+
+    h1 {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 20px;
+    }
+
+    select {
+      padding: 5px 8px;
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+
+    /* Arrange charts side by side */
+    .viz-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 50px;
+      flex-wrap: wrap;
+    }
+  </style>
 </head>
+
 <body>
-  
-<div id="scatter_plot"></div>
+  <h1>Distribution of Registered Hospitals in Australia</h1>
+  <p>Use the dropdown to explore hospital counts across states. The map and bar chart update together.</p>
 
-<script type="text/javascript">
+  <div>
+    <label for="stateFilter"><strong>Select State:</strong></label>
+    <select id="stateFilter">
+      <option value="">Show All</option>
+      <option value="NSW">NSW</option>
+      <option value="VIC">VIC</option>
+      <option value="QLD">QLD</option>
+      <option value="WA">WA</option>
+      <option value="SA">SA</option>
+      <option value="TAS">TAS</option>
+      <option value="NT">NT</option>
+      <option value="ACT">ACT</option>
+    </select>
+  </div>
 
-  var spec2 = "js/map.json";
-  vegaEmbed('#scatter_plot', spec2).then(function(result) {
-  }).catch(console.error);
-</script>
+  <div class="viz-container">
+    <div id="hospital_map" class="viz"></div>
+    <div id="hospital_bar" class="viz"></div>
+  </div>
 
+  <script>
+    const stateDropdown = document.getElementById('stateFilter');
+    let mapView, barView;
+
+    // Remove any embedded dropdowns from Vega specs
+    function removeInternalDropdown(spec) {
+      if (!spec || !Array.isArray(spec.params)) return spec;
+      spec.params.forEach(param => {
+        if (param && param.name === 'state_selection') delete param.bind;
+      });
+      return spec;
+    }
+
+    // Apply state filter to both charts
+    function applyFilter(stateValue) {
+      const selected = stateValue || null;
+      if (mapView) mapView.signal('state_selection', selected).run();
+      if (barView) barView.signal('state_selection', selected).run();
+    }
+
+    // Load both charts
+    Promise.all([
+      fetch('js/map.json').then(r => r.json()),
+      fetch('js/bar_chart.json').then(r => r.json())
+    ])
+      .then(([mapSpec, barSpec]) => {
+        const cleanedMapSpec = removeInternalDropdown(mapSpec);
+        const cleanedBarSpec = removeInternalDropdown(barSpec);
+
+        return Promise.all([
+          vegaEmbed('#hospital_map', cleanedMapSpec, {actions: false}),
+          vegaEmbed('#hospital_bar', cleanedBarSpec, {actions: false})
+        ]);
+      })
+      .then(([mapRes, barRes]) => {
+        mapView = mapRes.view;
+        barView = barRes.view;
+        applyFilter(stateDropdown.value);
+      })
+      .catch(console.error);
+
+    // Event listener for dropdown
+    stateDropdown.addEventListener('change', e => {
+      applyFilter(e.target.value);
+    });
+  </script>
 </body>
 </html>

@@ -1,9 +1,31 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "title": "Number of Registered Hospitals by State",
+  "title": "Number of Registered Hospitals by State (Australia)",
   "projection": {"type": "mercator"},
   "width": 900,
   "height": 700,
+  "params": [
+    {
+      "name": "state_selection",
+      "bind": {
+        "input": "select",
+        "options": [null, "NSW", "VIC", "QLD", "WA", "SA", "TAS", "NT", "ACT"],
+        "labels": [
+          "Show All",
+          "NSW",
+          "VIC",
+          "QLD",
+          "WA",
+          "SA",
+          "TAS",
+          "NT",
+          "ACT"
+        ],
+        "name": "Select State: "
+      },
+      "value": null
+    }
+  ],
   "layer": [
     {
       "data": {
@@ -42,6 +64,9 @@
         },
         {
           "filter": "isValid(datum.Lat) && isValid(datum.Lon)"
+        },
+        {
+          "filter": "state_selection == null || datum.State == state_selection"
         }
       ],
       "mark": {"type": "circle", "opacity": 0.7, "stroke": "black", "strokeWidth": 0.5},
