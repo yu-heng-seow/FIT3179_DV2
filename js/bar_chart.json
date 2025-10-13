@@ -1,8 +1,8 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "title": "Hospital Count Comparison by State (Australia)",
-  "width": 700,
-  "height": 400,
+  "width": 520,
+  "height": 320,
   "data": {
     "url": "https://raw.githubusercontent.com/yu-heng-seow/FIT3179_W9_HW/refs/heads/main/data/list-of-declared-hospitals_0.csv",
     "format": {"type": "csv"}

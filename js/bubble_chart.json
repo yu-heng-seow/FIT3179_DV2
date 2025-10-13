@@ -1,0 +1,113 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Beds vs Hospitals with Expenditure by State",
+  "width": 560,
+  "height": 360,
+  "data": {"url": "https://raw.githubusercontent.com/yu-heng-seow/FIT3179_W9_HW/refs/heads/main/data/available_bed.csv", "format": {"type": "csv"}},
+  "params": [
+    {
+      "name": "bubbleYear",
+      "value": 2022,
+      "bind": {
+        "input": "range",
+        "min": 2019,
+        "max": 2023,
+        "step": 1,
+        "name": "Year: "
+      }
+    }
+  ],
+  "transform": [
+    {"fold": ["2019", "2020", "2021", "2022", "2023"], "as": ["Year", "Beds"]},
+    {"calculate": "parseFloat(datum.Beds)", "as": "BedsValue"},
+    {"filter": "datum.Year == toString(bubbleYear)"},
+    {
+      "lookup": "State",
+      "from": {
+        "data": {"url": "https://raw.githubusercontent.com/yu-heng-seow/FIT3179_W9_HW/refs/heads/main/data/number_of_hospital.csv", "format": {"type": "csv"}},
+        "key": "State",
+        "fields": ["2019", "2020", "2021", "2022", "2023"]
+      },
+      "as": [
+        "Hospitals2019",
+        "Hospitals2020",
+        "Hospitals2021",
+        "Hospitals2022",
+        "Hospitals2023"
+      ]
+    },
+    {
+      "calculate": "toNumber(datum['Hospitals' + datum.Year])",
+      "as": "HospitalsValue"
+    },
+    {
+      "lookup": "State",
+      "from": {
+        "data": {"url": "https://raw.githubusercontent.com/yu-heng-seow/FIT3179_W9_HW/refs/heads/main/data/expenditure.csv", "format": {"type": "csv"}},
+        "key": "State",
+        "fields": ["2019", "2020", "2021", "2022", "2023"]
+      },
+      "as": [
+        "Expenditure2019",
+        "Expenditure2020",
+        "Expenditure2021",
+        "Expenditure2022",
+        "Expenditure2023"
+      ]
+    },
+    {
+      "calculate": "toNumber(datum['Expenditure' + datum.Year])",
+      "as": "ExpenditureValue"
+    },
+    {
+      "filter": "isValid(datum.BedsValue) && isValid(datum.HospitalsValue) && isValid(datum.ExpenditureValue)"
+    },
+    {"calculate": "parseFloat(datum.Year)", "as": "YearValue"}
+  ],
+  "mark": {"type": "circle", "opacity": 0.75, "stroke": "white", "strokeWidth": 1},
+  "encoding": {
+    "x": {
+      "field": "BedsValue",
+      "type": "quantitative",
+      "title": "Available Beds",
+      "axis": {"grid": true}
+    },
+    "y": {
+      "field": "HospitalsValue",
+      "type": "quantitative",
+      "title": "Number of Hospitals"
+    },
+    "size": {
+      "field": "ExpenditureValue",
+      "type": "quantitative",
+      "title": "Total Expenditure",
+      "scale": {"range": [100, 3000]},
+      "legend": {"format": "~s"}
+    },
+    "color": {
+      "field": "State",
+      "type": "nominal",
+      "title": "State",
+      "scale": {
+        "domain": ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "NT", "ACT"],
+        "range": [
+          "#f58518",
+          "#b279a2",
+          "#72b7b2",
+          "#ff9da6",
+          "#54a24b",
+          "#eeca3b",
+          "#e45756",
+          "#4c78a8"
+        ]
+      }
+    },
+    "tooltip": [
+      {"field": "State", "title": "State"},
+      {"field": "YearValue", "title": "Year"},
+      {"field": "BedsValue", "title": "Beds"},
+      {"field": "HospitalsValue", "title": "Hospitals"},
+      {"field": "ExpenditureValue", "title": "Expenditure", "format": ","}
+    ]
+  }
+}

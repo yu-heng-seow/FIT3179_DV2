@@ -2,8 +2,8 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "title": "Number of Registered Hospitals by State (Australia)",
   "projection": {"type": "mercator"},
-  "width": 900,
-  "height": 700,
+  "width": 640,
+  "height": 460,
   "params": [
     {
       "name": "state_selection",

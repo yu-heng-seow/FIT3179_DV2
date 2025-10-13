@@ -1,0 +1,82 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Hospital Funding Source by Ownership",
+  "width": 460,
+  "height": 320,
+  "data": {
+    "url": "https://raw.githubusercontent.com/yu-heng-seow/FIT3179_W9_HW/refs/heads/main/data/funding_source.csv",
+    "format": {"type": "csv"}
+  },
+  "params": [
+    {
+      "name": "selectedYear",
+      "value": 2022,
+      "bind": {
+        "input": "range",
+        "min": 2018,
+        "max": 2022,
+        "step": 1,
+        "name": "Year: "
+      }
+    }
+  ],
+  "transform": [
+    {
+      "fold": ["2018", "2019", "2020", "2021", "2022"],
+      "as": ["Year", "HospitalCount"]
+    },
+    {"calculate": "toNumber(datum.Year)", "as": "YearValue"},
+    {"filter": "datum.YearValue == selectedYear"}
+  ],
+  "mark": {
+    "type": "bar",
+    "cornerRadiusTopLeft": 4,
+    "cornerRadiusTopRight": 4
+  },
+  "encoding": {
+    "x": {
+      "field": "Source",
+      "type": "nominal",
+      "title": "Funding Source",
+      "sort": [
+        "Australian Government",
+        "State/territory government",
+        "Non-government"
+      ],
+      "axis": {
+        "labelAngle": 0,
+        "labelFontSize": 12,
+        "titleFontSize": 13,
+        "labelFontWeight": "bold"
+      }
+    },
+    "xOffset": {
+      "field": "Ownership",
+      "type": "nominal",
+      "title": null
+    },
+    "y": {
+      "field": "HospitalCount",
+      "type": "quantitative",
+      "title": "Amount Funded (Millions AUD)",
+      "axis": {
+        "labelFontSize": 12,
+        "titleFontSize": 13,
+        "grid": true
+      }
+    },
+    "color": {
+      "field": "Ownership",
+      "type": "nominal",
+      "title": "Ownership",
+      "scale": {"scheme": "tableau10"}
+    },
+    "tooltip": [
+      {"field": "Ownership", "title": "Ownership"},
+      {"field": "Source", "title": "Funding Source"},
+      {"field": "Year", "title": "Year"},
+      {"field": "HospitalCount", "title": "Hospitals"}
+    ],
+    "order": {"field": "Ownership", "type": "nominal"}
+  }
+}

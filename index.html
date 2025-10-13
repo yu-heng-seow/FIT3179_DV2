@@ -8,111 +8,64 @@
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #fafafa;
-      margin: 40px;
-      color: #222;
-      text-align: center;
-    }
-
-    h1 {
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-
-    p {
-      margin-bottom: 20px;
-    }
-
-    select {
-      padding: 5px 8px;
-      font-size: 14px;
-      margin-bottom: 25px;
-    }
-
-    /* Arrange charts side by side */
-    .viz-container {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 50px;
-      flex-wrap: wrap;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <h1>Distribution of Registered Hospitals in Australia</h1>
-  <p>Use the dropdown to explore hospital counts across states. The map and bar chart update together.</p>
+  <main>
+    <h1>Distribution of Registered Hospitals in Australia</h1>
+    <p>Use the dropdown to explore hospital counts across states. The map and bar chart update together.</p>
 
-  <div>
-    <label for="stateFilter"><strong>Select State:</strong></label>
-    <select id="stateFilter">
-      <option value="">Show All</option>
-      <option value="NSW">NSW</option>
-      <option value="VIC">VIC</option>
-      <option value="QLD">QLD</option>
-      <option value="WA">WA</option>
-      <option value="SA">SA</option>
-      <option value="TAS">TAS</option>
-      <option value="NT">NT</option>
-      <option value="ACT">ACT</option>
-    </select>
-  </div>
+    <div class="control-panel">
+      <label for="stateFilter"><strong>Select State:</strong></label>
+      <select id="stateFilter">
+        <option value="">Show All</option>
+        <option value="NSW">NSW</option>
+        <option value="VIC">VIC</option>
+        <option value="QLD">QLD</option>
+        <option value="WA">WA</option>
+        <option value="SA">SA</option>
+        <option value="TAS">TAS</option>
+        <option value="NT">NT</option>
+        <option value="ACT">ACT</option>
+      </select>
+    </div>
 
-  <div class="viz-container">
-    <div id="hospital_map" class="viz"></div>
-    <div id="hospital_bar" class="viz"></div>
-  </div>
+    <section class="story-block story-layout two-chart">
+      <div class="story-text">
+        <h2>Where hospitals are concentrated</h2>
+        <p>The choropleth highlights the population-heavy east coast, where New South Wales and Victoria host the largest share of public hospitals. Toggle individual states to see how quickly the totals drop once you move away from the eastern seaboard or into the sparsely populated territories.</p>
+        <p>When a state filter is applied, the bar chart to the right isolates that region over time. Notice how the national trend is fairly flat from 2019 to 2023, yet New South Wales ticks upward after 2021 while Western Australia barely moves. The dashboard is meant to encourage this back-and-forth between the map and the bar chart: pick a state on the map, then read the trajectory in the bar chart.</p>
+      </div>
+      <div class="story-viz stack">
+        <div id="hospital_map" class="viz tall"></div>
+        <div id="hospital_bar" class="viz"></div>
+      </div>
+    </section>
 
-  <script>
-    const stateDropdown = document.getElementById('stateFilter');
-    let mapView, barView;
+    <section class="story-block story-layout reverse">
+      <div class="story-viz single">
+        <div id="funding_bar" class="viz tall"></div>
+      </div>
+      <div class="story-text">
+        <h2>Funding profiles add context</h2>
+        <p>The stacked columns split each funding source by ownership, making it easier to see who is underwriting public versus private care. For most jurisdictions the state and territory governments shoulder almost the entire public bill, while the non-government column is dominated by private operators.</p>
+        <p>Pay attention to shifts in the private component as you move the slider, if a state's growth in hospitals is carried mainly by private dollars, it points to expanding commercial capacity rather than extra public access. Conversely, rising Commonwealth support alongside public spend suggests a concerted investment in the public system.</p>
+      </div>
+    </section>
 
-    // Remove any embedded dropdowns from Vega specs
-    function removeInternalDropdown(spec) {
-      if (!spec || !Array.isArray(spec.params)) return spec;
-      spec.params.forEach(param => {
-        if (param && param.name === 'state_selection') delete param.bind;
-      });
-      return spec;
-    }
+    <section class="story-block story-layout">
+      <div class="story-text">
+        <h2>Capacity, access, and investment</h2>
+        <p>The bubble chart brings the narrative together. Each point plots available beds against the number of hospitals, while bubble size signals health expenditure. Drag the year slider to see how capital spending spikes in 2021-2022 translated to extra beds in New South Wales and Victoria, but produced only modest gains for Tasmania and the Northern Territory.</p>
+        <p>If a bubble sits high but remains small, the state is operating many facilities on comparatively lean budgets, a signal to investigate efficiency or unmet demand. Combine the three views: the map tells you where hospitals reside, funding exposes the resources behind them, and the bubble chart shows whether those resources translate into capacity.</p>
+      </div>
+      <div class="story-viz">
+        <div id="bubble_chart" class="viz tall"></div>
+      </div>
+    </section>
+  </main>
 
-    // Apply state filter to both charts
-    function applyFilter(stateValue) {
-      const selected = stateValue || null;
-      if (mapView) mapView.signal('state_selection', selected).run();
-      if (barView) barView.signal('state_selection', selected).run();
-    }
-
-    // Load both charts
-    Promise.all([
-      fetch('js/map.json').then(r => r.json()),
-      fetch('js/bar_chart.json').then(r => r.json())
-    ])
-      .then(([mapSpec, barSpec]) => {
-        const cleanedMapSpec = removeInternalDropdown(mapSpec);
-        const cleanedBarSpec = removeInternalDropdown(barSpec);
-
-        return Promise.all([
-          vegaEmbed('#hospital_map', cleanedMapSpec, {actions: false}),
-          vegaEmbed('#hospital_bar', cleanedBarSpec, {actions: false})
-        ]);
-      })
-      .then(([mapRes, barRes]) => {
-        mapView = mapRes.view;
-        barView = barRes.view;
-        applyFilter(stateDropdown.value);
-      })
-      .catch(console.error);
-
-    // Event listener for dropdown
-    stateDropdown.addEventListener('change', e => {
-      applyFilter(e.target.value);
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
