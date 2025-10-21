@@ -5,7 +5,9 @@
   "height": 320,
   "data": {
     "url": "https://raw.githubusercontent.com/yu-heng-seow/FIT3179_W9_HW/refs/heads/main/data/funding_source.csv",
-    "format": {"type": "csv"}
+    "format": {
+      "type": "csv"
+    }
   },
   "params": [
     {
@@ -22,11 +24,25 @@
   ],
   "transform": [
     {
-      "fold": ["2018", "2019", "2020", "2021", "2022"],
-      "as": ["Year", "HospitalCount"]
+      "fold": [
+        "2018",
+        "2019",
+        "2020",
+        "2021",
+        "2022"
+      ],
+      "as": [
+        "Year",
+        "HospitalCount"
+      ]
     },
-    {"calculate": "toNumber(datum.Year)", "as": "YearValue"},
-    {"filter": "datum.YearValue == selectedYear"}
+    {
+      "calculate": "toNumber(datum.Year)",
+      "as": "YearValue"
+    },
+    {
+      "filter": "datum.YearValue == selectedYear"
+    }
   ],
   "mark": {
     "type": "bar",
@@ -69,14 +85,31 @@
       "field": "Ownership",
       "type": "nominal",
       "title": "Ownership",
-      "scale": {"scheme": "tableau10"}
+      "scale": {
+        "scheme": "tableau10"
+      }
     },
     "tooltip": [
-      {"field": "Ownership", "title": "Ownership"},
-      {"field": "Source", "title": "Funding Source"},
-      {"field": "Year", "title": "Year"},
-      {"field": "HospitalCount", "title": "Hospitals"}
+      {
+        "field": "Ownership",
+        "title": "Ownership"
+      },
+      {
+        "field": "Source",
+        "title": "Funding Source"
+      },
+      {
+        "field": "Year",
+        "title": "Year"
+      },
+      {
+        "field": "HospitalCount",
+        "title": "Hospitals"
+      }
     ],
-    "order": {"field": "Ownership", "type": "nominal"}
+    "order": {
+      "field": "Ownership",
+      "type": "nominal"
+    }
   }
 }

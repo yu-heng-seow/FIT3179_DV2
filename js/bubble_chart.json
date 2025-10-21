@@ -3,7 +3,12 @@
   "title": "Beds vs Hospitals with Expenditure by State",
   "width": 560,
   "height": 360,
-  "data": {"url": "https://raw.githubusercontent.com/yu-heng-seow/FIT3179_W9_HW/refs/heads/main/data/available_bed.csv", "format": {"type": "csv"}},
+  "data": {
+    "url": "https://raw.githubusercontent.com/yu-heng-seow/FIT3179_W9_HW/refs/heads/main/data/available_bed.csv",
+    "format": {
+      "type": "csv"
+    }
+  },
   "params": [
     {
       "name": "bubbleYear",
@@ -18,15 +23,43 @@
     }
   ],
   "transform": [
-    {"fold": ["2019", "2020", "2021", "2022", "2023"], "as": ["Year", "Beds"]},
-    {"calculate": "parseFloat(datum.Beds)", "as": "BedsValue"},
-    {"filter": "datum.Year == toString(bubbleYear)"},
+    {
+      "fold": [
+        "2019",
+        "2020",
+        "2021",
+        "2022",
+        "2023"
+      ],
+      "as": [
+        "Year",
+        "Beds"
+      ]
+    },
+    {
+      "calculate": "parseFloat(datum.Beds)",
+      "as": "BedsValue"
+    },
+    {
+      "filter": "datum.Year == toString(bubbleYear)"
+    },
     {
       "lookup": "State",
       "from": {
-        "data": {"url": "https://raw.githubusercontent.com/yu-heng-seow/FIT3179_W9_HW/refs/heads/main/data/number_of_hospital.csv", "format": {"type": "csv"}},
+        "data": {
+          "url": "https://raw.githubusercontent.com/yu-heng-seow/FIT3179_W9_HW/refs/heads/main/data/number_of_hospital.csv",
+          "format": {
+            "type": "csv"
+          }
+        },
         "key": "State",
-        "fields": ["2019", "2020", "2021", "2022", "2023"]
+        "fields": [
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "2023"
+        ]
       },
       "as": [
         "Hospitals2019",
@@ -43,9 +76,20 @@
     {
       "lookup": "State",
       "from": {
-        "data": {"url": "https://raw.githubusercontent.com/yu-heng-seow/FIT3179_W9_HW/refs/heads/main/data/expenditure.csv", "format": {"type": "csv"}},
+        "data": {
+          "url": "https://raw.githubusercontent.com/yu-heng-seow/FIT3179_W9_HW/refs/heads/main/data/expenditure.csv",
+          "format": {
+            "type": "csv"
+          }
+        },
         "key": "State",
-        "fields": ["2019", "2020", "2021", "2022", "2023"]
+        "fields": [
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "2023"
+        ]
       },
       "as": [
         "Expenditure2019",
@@ -62,15 +106,25 @@
     {
       "filter": "isValid(datum.BedsValue) && isValid(datum.HospitalsValue) && isValid(datum.ExpenditureValue)"
     },
-    {"calculate": "parseFloat(datum.Year)", "as": "YearValue"}
+    {
+      "calculate": "parseFloat(datum.Year)",
+      "as": "YearValue"
+    }
   ],
-  "mark": {"type": "circle", "opacity": 0.75, "stroke": "white", "strokeWidth": 1},
+  "mark": {
+    "type": "circle",
+    "opacity": 0.75,
+    "stroke": "white",
+    "strokeWidth": 1
+  },
   "encoding": {
     "x": {
       "field": "BedsValue",
       "type": "quantitative",
       "title": "Available Beds",
-      "axis": {"grid": true}
+      "axis": {
+        "grid": true
+      }
     },
     "y": {
       "field": "HospitalsValue",
@@ -81,15 +135,31 @@
       "field": "ExpenditureValue",
       "type": "quantitative",
       "title": "Total Expenditure",
-      "scale": {"range": [100, 3000]},
-      "legend": {"format": "~s"}
+      "scale": {
+        "range": [
+          100,
+          3000
+        ]
+      },
+      "legend": {
+        "format": "~s"
+      }
     },
     "color": {
       "field": "State",
       "type": "nominal",
       "title": "State",
       "scale": {
-        "domain": ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "NT", "ACT"],
+        "domain": [
+          "NSW",
+          "VIC",
+          "QLD",
+          "WA",
+          "SA",
+          "TAS",
+          "NT",
+          "ACT"
+        ],
         "range": [
           "#f58518",
           "#b279a2",
@@ -103,11 +173,27 @@
       }
     },
     "tooltip": [
-      {"field": "State", "title": "State"},
-      {"field": "YearValue", "title": "Year"},
-      {"field": "BedsValue", "title": "Beds"},
-      {"field": "HospitalsValue", "title": "Hospitals"},
-      {"field": "ExpenditureValue", "title": "Expenditure", "format": ","}
+      {
+        "field": "State",
+        "title": "State"
+      },
+      {
+        "field": "YearValue",
+        "title": "Year"
+      },
+      {
+        "field": "BedsValue",
+        "title": "Beds"
+      },
+      {
+        "field": "HospitalsValue",
+        "title": "Hospitals"
+      },
+      {
+        "field": "ExpenditureValue",
+        "title": "Expenditure",
+        "format": ","
+      }
     ]
   }
 }

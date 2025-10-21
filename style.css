@@ -81,6 +81,17 @@ select {
   align-items: flex-start;
 }
 
+.viz-block {
+  width: 100%;
+  max-width: 520px;
+}
+
+.viz-block h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
 .story-viz .viz {
   width: 100%;
   max-width: 480px;

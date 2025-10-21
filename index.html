@@ -38,14 +38,23 @@
         <p>When a state filter is applied, the bar chart to the right isolates that region over time. Notice how the national trend is fairly flat from 2019 to 2023, yet New South Wales ticks upward after 2021 while Western Australia barely moves. The dashboard is meant to encourage this back-and-forth between the map and the bar chart: pick a state on the map, then read the trajectory in the bar chart.</p>
       </div>
       <div class="story-viz stack">
-        <div id="hospital_map" class="viz tall"></div>
-        <div id="hospital_bar" class="viz"></div>
+        <div class="viz-block">
+          <h3>Map: Number of Registered Hospitals by State</h3>
+          <div id="hospital_map" class="viz tall"></div>
+        </div>
+        <div class="viz-block">
+          <h3>Donut: Public vs Private Hospitals</h3>
+          <div id="hospital_bar" class="viz"></div>
+        </div>
       </div>
     </section>
 
     <section class="story-block story-layout reverse">
       <div class="story-viz single">
-        <div id="funding_bar" class="viz tall"></div>
+        <div class="viz-block">
+          <h3>Stacked Bar Chart: Funding Source by Ownership</h3>
+          <div id="funding_bar" class="viz tall"></div>
+        </div>
       </div>
       <div class="story-text">
         <h2>Funding profiles add context</h2>
@@ -61,7 +70,10 @@
         <p>If a bubble sits high but remains small, the state is operating many facilities on comparatively lean budgets, a signal to investigate efficiency or unmet demand. Combine the three views: the map tells you where hospitals reside, funding exposes the resources behind them, and the bubble chart shows whether those resources translate into capacity.</p>
       </div>
       <div class="story-viz">
-        <div id="bubble_chart" class="viz tall"></div>
+        <div class="viz-block">
+          <h3>Bubble Chart: Beds, Hospitals, and Expenditure</h3>
+          <div id="bubble_chart" class="viz tall"></div>
+        </div>
       </div>
     </section>
   </main>

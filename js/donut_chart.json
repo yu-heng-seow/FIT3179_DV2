@@ -1,0 +1,111 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Public vs Private Hospitals by State",
+  "width": 360,
+  "height": 360,
+  "data": {
+    "url": "data/hospitals_by_state.csv",
+    "format": {
+      "type": "csv"
+    }
+  },
+  "params": [
+    {
+      "name": "state_selection",
+      "bind": {
+        "input": "select",
+        "options": [
+          null,
+          "NSW",
+          "VIC",
+          "QLD",
+          "WA",
+          "SA",
+          "TAS",
+          "NT",
+          "ACT"
+        ],
+        "labels": [
+          "Show All",
+          "NSW",
+          "VIC",
+          "QLD",
+          "WA",
+          "SA",
+          "TAS",
+          "NT",
+          "ACT"
+        ],
+        "name": "Select State: "
+      },
+      "value": null
+    }
+  ],
+  "transform": [
+    {
+      "filter": "datum.State != null && datum.State != '' && datum.Privacy != null && datum.Privacy != ''"
+    },
+    {
+      "filter": "state_selection == null || datum.State == state_selection"
+    },
+    {
+      "aggregate": [
+        {
+          "op": "sum",
+          "field": "Count",
+          "as": "HospitalCount"
+        }
+      ],
+      "groupby": [
+        "Privacy"
+      ]
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "sum",
+          "field": "HospitalCount",
+          "as": "TotalHospitals"
+        }
+      ]
+    },
+    {
+      "calculate": "datum.TotalHospitals ? datum.HospitalCount / datum.TotalHospitals : 0",
+      "as": "Share"
+    }
+  ],
+  "mark": {
+    "type": "arc",
+    "innerRadius": 60
+  },
+  "encoding": {
+    "theta": {
+      "field": "HospitalCount",
+      "type": "quantitative",
+      "stack": true
+    },
+    "color": {
+      "field": "Privacy",
+      "type": "nominal",
+      "title": "Hospital Type"
+    },
+    "tooltip": [
+      {
+        "field": "Privacy",
+        "title": "Hospital Type"
+      },
+      {
+        "field": "HospitalCount",
+        "title": "Hospitals"
+      },
+      {
+        "field": "Share",
+        "title": "Share",
+        "format": ".0%"
+      }
+    ]
+  },
+  "view": {
+    "stroke": null
+  }
+}
