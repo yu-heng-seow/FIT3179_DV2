@@ -30,7 +30,7 @@ Promise.all([
 
     return Promise.all([
       vegaEmbed('#hospital_map', cleanedMapSpec, {actions: false}),
-      vegaEmbed('#hospital_bar', cleanedDonutSpec, {actions: false}),
+      vegaEmbed('#hospital_donut', cleanedDonutSpec, {actions: false}),
       vegaEmbed('#funding_bar', fundingSpec, {actions: false}),
       vegaEmbed('#bubble_chart', bubbleSpec, {actions: false})
     ]);
