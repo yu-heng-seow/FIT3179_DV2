@@ -5,14 +5,26 @@
   "height": 320,
   "data": {
     "url": "https://raw.githubusercontent.com/yu-heng-seow/FIT3179_W9_HW/refs/heads/main/data/list-of-declared-hospitals_0.csv",
-    "format": {"type": "csv"}
+    "format": {
+      "type": "csv"
+    }
   },
   "params": [
     {
       "name": "state_selection",
       "bind": {
         "input": "select",
-        "options": [null, "NSW", "VIC", "QLD", "WA", "SA", "TAS", "NT", "ACT"],
+        "options": [
+          null,
+          "NSW",
+          "VIC",
+          "QLD",
+          "WA",
+          "SA",
+          "TAS",
+          "NT",
+          "ACT"
+        ],
         "labels": [
           "Show All",
           "NSW",
@@ -30,9 +42,23 @@
     }
   ],
   "transform": [
-    {"filter": "datum.State != null && datum.State != ''"},
-    {"aggregate": [{"op": "count", "as": "HospitalCount"}], "groupby": ["State"]},
-    {"filter": "state_selection == null || datum.State == state_selection"}
+    {
+      "filter": "datum.State != null && datum.State != ''"
+    },
+    {
+      "aggregate": [
+        {
+          "op": "count",
+          "as": "HospitalCount"
+        }
+      ],
+      "groupby": [
+        "State"
+      ]
+    },
+    {
+      "filter": "state_selection == null || datum.State == state_selection"
+    }
   ],
   "layer": [
     {
@@ -46,7 +72,16 @@
           "field": "State",
           "type": "nominal",
           "title": "State",
-          "sort": ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "NT", "ACT"],
+          "sort": [
+            "NSW",
+            "VIC",
+            "QLD",
+            "WA",
+            "SA",
+            "TAS",
+            "NT",
+            "ACT"
+          ],
           "axis": {
             "labelAngle": 0,
             "labelFontSize": 12,
@@ -67,23 +102,56 @@
         "color": {
           "field": "HospitalCount",
           "type": "quantitative",
-          "scale": {"scheme": "blues"},
-          "legend": {"title": "Hospitals"}
+          "scale": {
+            "scheme": "blues"
+          },
+          "legend": {
+            "title": "Hospitals"
+          }
         },
         "tooltip": [
-          {"field": "State", "title": "State"},
-          {"field": "HospitalCount", "title": "Hospitals"}
+          {
+            "field": "State",
+            "title": "State"
+          },
+          {
+            "field": "HospitalCount",
+            "title": "Hospitals"
+          }
         ]
       }
     },
     {
       "transform": [
-        {"aggregate": [{"op": "max", "field": "HospitalCount", "as": "MaxHosp"}]}
+        {
+          "aggregate": [
+            {
+              "op": "max",
+              "field": "HospitalCount",
+              "as": "MaxHosp"
+            }
+          ]
+        }
       ],
-      "mark": {"type": "rule", "color": "red", "strokeDash": [4, 4]},
+      "mark": {
+        "type": "rule",
+        "color": "red",
+        "strokeDash": [
+          4,
+          4
+        ]
+      },
       "encoding": {
-        "y": {"field": "MaxHosp", "type": "quantitative"},
-        "tooltip": [{"field": "MaxHosp", "title": "Highest Count"}]
+        "y": {
+          "field": "MaxHosp",
+          "type": "quantitative"
+        },
+        "tooltip": [
+          {
+            "field": "MaxHosp",
+            "title": "Highest Count"
+          }
+        ]
       }
     }
   ]

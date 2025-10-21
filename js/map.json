@@ -1,7 +1,9 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "title": "Number of Registered Hospitals by State (Australia)",
-  "projection": {"type": "mercator"},
+  "projection": {
+    "type": "mercator"
+  },
   "width": 640,
   "height": 460,
   "params": [
@@ -9,7 +11,17 @@
       "name": "state_selection",
       "bind": {
         "input": "select",
-        "options": [null, "NSW", "VIC", "QLD", "WA", "SA", "TAS", "NT", "ACT"],
+        "options": [
+          null,
+          "NSW",
+          "VIC",
+          "QLD",
+          "WA",
+          "SA",
+          "TAS",
+          "NT",
+          "ACT"
+        ],
         "labels": [
           "Show All",
           "NSW",
@@ -30,59 +42,90 @@
     {
       "data": {
         "url": "https://raw.githubusercontent.com/yu-heng-seow/FIT3179_W9_HW/refs/heads/main/data/STE_2021_AUST_GDA2020.json",
-        "format": {"type": "topojson", "feature": "STE_2021_AUST_GDA2020"}
+        "format": {
+          "type": "topojson",
+          "feature": "STE_2021_AUST_GDA2020"
+        }
       },
-      "mark": {"type": "geoshape", "fill": "#f5f5f5", "stroke": "white"}
+      "mark": {
+        "type": "geoshape",
+        "fill": "#f5f5f5",
+        "stroke": "white"
+      }
     },
     {
       "data": {
-        "url": "https://raw.githubusercontent.com/yu-heng-seow/FIT3179_W9_HW/refs/heads/main/data/list-of-declared-hospitals_0.csv"
+        "url": "https://raw.githubusercontent.com/yu-heng-seow/FIT3179_W9_HW/refs/heads/main/data/hospitals_by_state.csv"
       },
       "transform": [
         {
-          "aggregate": [{"op": "count", "as": "HospitalCount"}],
-          "groupby": ["State"]
-        },
-        {
-          "lookup": "State",
-          "from": {
-            "data": {
-              "values": [
-                {"State": "NSW", "Lat": -33.8688, "Lon": 151.2093},
-                {"State": "VIC", "Lat": -37.8136, "Lon": 144.9631},
-                {"State": "QLD", "Lat": -27.4698, "Lon": 153.0251},
-                {"State": "WA", "Lat": -31.9505, "Lon": 115.8605},
-                {"State": "SA", "Lat": -34.9285, "Lon": 138.6007},
-                {"State": "TAS", "Lat": -42.8821, "Lon": 147.3272},
-                {"State": "ACT", "Lat": -35.2809, "Lon": 149.13},
-                {"State": "NT", "Lat": -12.4634, "Lon": 130.8456}
-              ]
+          "aggregate": [
+            {
+              "op": "sum",
+              "field": "Count",
+              "as": "HospitalCount"
             },
-            "key": "State",
-            "fields": ["Lat", "Lon"]
-          }
-        },
-        {
-          "filter": "isValid(datum.Lat) && isValid(datum.Lon)"
+            {
+              "op": "max",
+              "field": "Lat",
+              "as": "Lat"
+            },
+            {
+              "op": "max",
+              "field": "Lon",
+              "as": "Lon"
+            }
+          ],
+          "groupby": [
+            "State"
+          ]
         },
         {
           "filter": "state_selection == null || datum.State == state_selection"
         }
       ],
-      "mark": {"type": "circle", "opacity": 0.7, "stroke": "black", "strokeWidth": 0.5},
+      "mark": {
+        "type": "circle",
+        "opacity": 0.7,
+        "stroke": "black",
+        "strokeWidth": 0.5
+      },
       "encoding": {
-        "longitude": {"field": "Lon", "type": "quantitative"},
-        "latitude": {"field": "Lat", "type": "quantitative"},
+        "longitude": {
+          "field": "Lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "Lat",
+          "type": "quantitative"
+        },
         "size": {
           "field": "HospitalCount",
           "type": "quantitative",
-          "scale": {"range": [100, 2000]},
-          "legend": {"title": "Hospitals"}
+          "scale": {
+            "range": [
+              100,
+              2000
+            ]
+          },
+          "legend": {
+            "title": "Hospitals"
+          }
         },
-        "color": {"field": "State", "type": "nominal", "legend": null},
+        "color": {
+          "field": "State",
+          "type": "nominal",
+          "legend": null
+        },
         "tooltip": [
-          {"field": "State", "title": "State"},
-          {"field": "HospitalCount", "title": "Hospitals"}
+          {
+            "field": "State",
+            "title": "State"
+          },
+          {
+            "field": "HospitalCount",
+            "title": "Hospitals"
+          }
         ]
       }
     }
